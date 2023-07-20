@@ -83,10 +83,7 @@ std::string NormalizeExtension(const std::string& strExtension)
 CGameClient::CGameClient(const ADDON::AddonInfoPtr& addonInfo)
   : CAddonDll(addonInfo, ADDON::AddonType::GAMEDLL),
     m_subsystems(CGameClientSubsystem::CreateSubsystems(*this, *m_ifc.game, m_critSection)),
-    m_bSupportsAllExtensions(false),
-    m_bIsPlaying(false),
-    m_serializeSize(0),
-    m_region(GAME_REGION_UNKNOWN)
+    m_bIsPlaying(false)
 {
   using namespace ADDON;
 
@@ -599,8 +596,6 @@ void CGameClient::LogException(const char* strFunctionName) const
 
 void CGameClient::cb_close_game(KODI_HANDLE kodiInstance)
 {
-  using namespace MESSAGING;
-
   CServiceBroker::GetAppMessenger()->PostMsg(TMSG_GUI_ACTION, WINDOW_INVALID, -1,
                                              static_cast<void*>(new CAction(ACTION_STOP)));
 }

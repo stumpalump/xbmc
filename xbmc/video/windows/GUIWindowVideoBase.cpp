@@ -124,7 +124,7 @@ bool CGUIWindowVideoBase::OnMessage(CGUIMessage& message)
   case GUI_MSG_CLICKED:
     {
       int iControl = message.GetSenderId();
-#if defined(HAS_DVD_DRIVE)
+#if defined(HAS_OPTICAL_DRIVE)
       if (iControl == CONTROL_PLAY_DVD)
       {
         // play movie...
@@ -1080,20 +1080,21 @@ bool CGUIWindowVideoBase::OnPlayMedia(int iItem, const std::string &player)
   CServiceBroker::GetPlaylistPlayer().Reset();
   CServiceBroker::GetPlaylistPlayer().SetCurrentPlaylist(PLAYLIST::TYPE_NONE);
 
-  CFileItem item(*pItem);
+  const auto itemCopy = std::make_shared<CFileItem>(*pItem);
+
   if (pItem->IsVideoDb())
   {
-    item.SetPath(pItem->GetVideoInfoTag()->m_strFileNameAndPath);
-    item.SetProperty("original_listitem_url", pItem->GetPath());
+    itemCopy->SetPath(pItem->GetVideoInfoTag()->m_strFileNameAndPath);
+    itemCopy->SetProperty("original_listitem_url", pItem->GetPath());
   }
-  CLog::Log(LOGDEBUG, "{} {}", __FUNCTION__, CURL::GetRedacted(item.GetPath()));
+  CLog::Log(LOGDEBUG, "{} {}", __FUNCTION__, CURL::GetRedacted(itemCopy->GetPath()));
 
-  item.SetProperty("playlist_type_hint", m_guiState->GetPlaylist());
+  itemCopy->SetProperty("playlist_type_hint", m_guiState->GetPlaylist());
 
   if (m_thumbLoader.IsLoading())
     m_thumbLoader.StopAsync();
 
-  CServiceBroker::GetPlaylistPlayer().Play(pItem, player);
+  CServiceBroker::GetPlaylistPlayer().Play(itemCopy, player);
 
   const auto& components = CServiceBroker::GetAppComponents();
   const auto appPlayer = components.GetComponent<CApplicationPlayer>();
