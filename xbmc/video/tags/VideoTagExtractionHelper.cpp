@@ -21,10 +21,9 @@ using namespace VIDEO::TAGS;
 
 bool CVideoTagExtractionHelper::IsExtractionSupportedFor(const CFileItem& item)
 {
-  const std::string fileNameAndPath = item.GetVideoInfoTag()->m_strFileNameAndPath;
   return CServiceBroker::GetSettingsComponent()->GetSettings()->GetBool(
              CSettings::SETTING_MYVIDEOS_USETAGS) &&
-         URIUtils::HasExtension(fileNameAndPath, ".mkv|.mp4|.avi|.m4v");
+         URIUtils::HasExtension(item.GetDynPath(), ".mkv|.mp4|.avi|.m4v");
 }
 
 std::string CVideoTagExtractionHelper::ExtractEmbeddedArtFor(const CFileItem& item,
@@ -36,10 +35,7 @@ std::string CVideoTagExtractionHelper::ExtractEmbeddedArtFor(const CFileItem& it
   for (const auto& it : tag.m_coverArt)
   {
     if (it.m_type == artType)
-    {
-      return CTextureUtils::GetWrappedImageURL(item.GetVideoInfoTag()->m_strFileNameAndPath,
-                                               "video_" + artType);
-    }
+      return CTextureUtils::GetWrappedImageURL(item.GetDynPath(), "video_" + artType);
   }
   return {};
 }
