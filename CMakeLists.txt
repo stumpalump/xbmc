@@ -21,6 +21,9 @@ if(DEPENDS_DIR)
   list(APPEND CMAKE_PREFIX_PATH ${DEPENDS_DIR})
 endif()
 
+# Variable to indicate if the project is targeting a Multi Config Generator (VS/Xcode primarily)
+get_property(_multiconfig_generator GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+
 # Set CORE_BUILD_DIR
 set(CORE_BUILD_DIR build)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
@@ -440,7 +443,6 @@ add_custom_command(
   COMMAND ${CMAKE_COMMAND} -E touch ${CMAKE_BINARY_DIR}/${CORE_BUILD_DIR}/$<CONFIG>/gen_skin.timestamp
   DEPENDS ${CMAKE_BINARY_DIR}/${CORE_BUILD_DIR}/GeneratedPackSkins.cmake
           ${XBT_SOURCE_FILELIST}
-  BYPRODUCTS ${CMAKE_BINARY_DIR}/${CORE_BUILD_DIR}/$<CONFIG>/gen_skin.timestamp
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
   COMMENT "Generating skin xbt"
 )
